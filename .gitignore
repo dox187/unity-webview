@@ -12,3 +12,4 @@ Temp
 .idea/
 plugins/Android/gradle_build/libs/
 plugins/Android/gradle_build/src/
+build/
