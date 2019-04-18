@@ -86,6 +86,7 @@ public class CWebViewPlugin {
     private int progress;
     private boolean canGoBack;
     private boolean canGoForward;
+    private boolean openLinksInExternalBrowser;
     private Hashtable<String, String> mCustomHeaders;
     private String mWebViewUA;
 
@@ -239,8 +240,10 @@ public class CWebViewPlugin {
                 public boolean shouldOverrideUrlLoading(WebView view, String url) {
                     canGoBack = webView.canGoBack();
                     canGoForward = webView.canGoForward();
-                    if (url.startsWith("http://") || url.startsWith("https://")
-                        || url.startsWith("file://") || url.startsWith("javascript:")) {
+                    boolean isUseWebview = openLinksInExternalBrowser
+                            ? url.startsWith("file://") || url.startsWith("javascript:")
+                            : url.startsWith("http://") || url.startsWith("https://") || url.startsWith("file://") || url.startsWith("javascript:");
+                    if (isUseWebview) {
                         // Let webview handle the URL
                         return false;
                     } else if (url.startsWith("unity:")) {
@@ -433,6 +436,10 @@ public class CWebViewPlugin {
                 mWebView.setVisibility(View.GONE);
             }
         }});
+    }
+
+    public void SetOpenLinksInExternalBrowser(final boolean isOpen) {
+        openLinksInExternalBrowser = isOpen;
     }
 
     // cf. https://stackoverflow.com/questions/31788748/webview-youtube-videos-playing-in-background-on-rotation-and-minimise/31789193#31789193
