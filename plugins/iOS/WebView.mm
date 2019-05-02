@@ -310,7 +310,8 @@ static WKProcessPool *_sharedProcessPool;
     }
     NSURL *nsurl = [navigationAction.request URL];
     NSString *url = [nsurl absoluteString];
-    if ([url rangeOfString:@"//itunes.apple.com/"].location != NSNotFound) {
+    if ([url rangeOfString:@"//itunes.apple.com/"].location != NSNotFound ||
+        [url rangeOfString:@"//www.youtube.com/watch"].location != NSNotFound) {
         [[UIApplication sharedApplication] openURL:nsurl];
         decisionHandler(WKNavigationActionPolicyCancel);
         return;
