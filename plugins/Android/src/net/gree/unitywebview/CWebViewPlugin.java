@@ -24,6 +24,7 @@ package net.gree.unitywebview;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
@@ -131,6 +132,15 @@ public class CWebViewPlugin {
             mCustomHeaders = new Hashtable<String, String>();
             
             final WebView webView = new WebView(a);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                try {
+                    ApplicationInfo ai = a.getPackageManager().getApplicationInfo(a.getPackageName(), 0);
+                    if ((ai.flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0) {
+                        webView.setWebContentsDebuggingEnabled(true);
+                    }
+                } catch (Exception ex) {
+                }
+            }
             webView.setVisibility(View.GONE);
             webView.setFocusable(true);
             webView.setFocusableInTouchMode(true);
@@ -277,7 +287,9 @@ public class CWebViewPlugin {
                 // Log.i("CWebViewPlugin", "Build.VERSION.SDK_INT = " + Build.VERSION.SDK_INT);
                 webSettings.setAllowUniversalAccessFromFileURLs(true);
             }
-            webSettings.setMediaPlaybackRequiresUserGesture(false);
+            if (android.os.Build.VERSION.SDK_INT >= 17) {
+                webSettings.setMediaPlaybackRequiresUserGesture(false);
+            }
             webSettings.setDatabaseEnabled(true);
             webSettings.setDomStorageEnabled(true);
             String databasePath = webView.getContext().getDir("databases", Context.MODE_PRIVATE).getPath();
@@ -287,7 +299,7 @@ public class CWebViewPlugin {
                 webView.setBackgroundColor(0x00000000);
             }
 
-            if (layout == null) {
+            if (layout == null || layout.getParent() != a.findViewById(android.R.id.content)) {
                 layout = new FrameLayout(a);
                 a.addContentView(
                     layout,
@@ -517,4 +529,9 @@ public class CWebViewPlugin {
         }
     }
 
+    public String GetCookies(String url)
+    {
+        CookieManager cookieManager = CookieManager.getInstance();
+        return cookieManager.getCookie(url);
+    }
 }
