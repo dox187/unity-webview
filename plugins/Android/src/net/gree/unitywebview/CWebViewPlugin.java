@@ -475,13 +475,6 @@ public class CWebViewPlugin extends Fragment {
                 public boolean shouldOverrideUrlLoading(WebView view, String url) {
                     canGoBack = webView.canGoBack();
                     canGoForward = webView.canGoForward();
-                    boolean isUseWebview = openLinksInExternalBrowser
-                            ? url.startsWith("file://") || url.startsWith("javascript:")
-                            : url.startsWith("http://") || url.startsWith("https://") || url.startsWith("file://") || url.startsWith("javascript:");
-                    if (isUseWebview) {
-                        // Let webview handle the URL
-                        return false;
-                    }
                     boolean pass = true;
                     if (mAllowRegex != null && mAllowRegex.matcher(url).find()) {
                         pass = true;
@@ -491,8 +484,10 @@ public class CWebViewPlugin extends Fragment {
                     if (!pass) {
                         return true;
                     }
-                    if (url.startsWith("http://") || url.startsWith("https://")
-                        || url.startsWith("file://") || url.startsWith("javascript:")) {
+                    boolean isUseWebview = openLinksInExternalBrowser
+                        ? url.startsWith("file://") || url.startsWith("javascript:")
+                        : url.startsWith("http://") || url.startsWith("https://") || url.startsWith("file://") || url.startsWith("javascript:");
+                    if (isUseWebview) {
                         mWebViewPlugin.call("CallOnStarted", url);
                         // Let webview handle the URL
                         return false;
